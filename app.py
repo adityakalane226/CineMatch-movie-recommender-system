@@ -2,6 +2,8 @@ import streamlit as st
 import pickle as pkl
 import pandas as pd
 import requests
+import os
+import gdown
 
 # ----------------------------------------------------------------------------
 # PAGE CONFIG
@@ -132,9 +134,21 @@ st.markdown("""
 # ----------------------------------------------------------------------------
 @st.cache_resource
 def load_data():
-    movies_dict = pkl.load(open('movie_dict.pkl', 'rb'))
+
+    if not os.path.exists("similarity.pkl"):
+        file_id = "1RmaypuYOnky6DSHP4Cr8XJ-6IAy7L3l2"
+        url = f"https://drive.google.com/uc?id={file_id}"
+
+        gdown.download(url, "similarity.pkl", quiet=False)
+
+    with open("movie_dict.pkl", "rb") as f:
+        movies_dict = pkl.load(f)
+
     movies_df = pd.DataFrame(movies_dict)
-    similarity_matrix = pkl.load(open('similarity.pkl', 'rb'))
+
+    with open("similarity.pkl", "rb") as f:
+        similarity_matrix = pkl.load(f)
+
     return movies_df, similarity_matrix
 
 movies, similarity = load_data()
