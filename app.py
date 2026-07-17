@@ -134,16 +134,18 @@ st.markdown("""
 # ----------------------------------------------------------------------------
 @st.cache_resource
 def load_data():
-
+    # Download similarity matrix if missing
     if not os.path.exists("similarity.pkl"):
-        file_id = "1RmaypuYOnky6DSHP4Cr8XJ-6IAy7L3l2"
-        url = f"https://drive.google.com/uc?id={file_id}"
+        sim_id = "1RmaypuYOnky6DSHP4Cr8XJ-6IAy7L3l2"
+        gdown.download(f"https://drive.google.com/uc?id={sim_id}", "similarity.pkl", quiet=False, fuzzy=True)
 
-        gdown.download(url, "similarity.pkl", quiet=False)
+    # Download movie dict if missing
+    if not os.path.exists("movie_dict.pkl"):
+        dict_id = "1v1bheC3lnWuuU25rdk6vX5w8Yz5hj3B-"
+        gdown.download(f"https://drive.google.com/uc?id={dict_id}", "movie_dict.pkl", quiet=False, fuzzy=True)
 
     with open("movie_dict.pkl", "rb") as f:
         movies_dict = pkl.load(f)
-
     movies_df = pd.DataFrame(movies_dict)
 
     with open("similarity.pkl", "rb") as f:
