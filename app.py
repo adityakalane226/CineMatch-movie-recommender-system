@@ -129,20 +129,22 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ----------------------------------------------------------------------------
-# DATA LOADING
-# ----------------------------------------------------------------------------
+def download_if_missing(filename, url):
+    if not os.path.exists(filename):
+        r = requests.get(url, timeout=60)
+        r.raise_for_status()
+        with open(filename, "wb") as f:
+            f.write(r.content)
 @st.cache_resource
 def load_data():
-    # Download similarity matrix if missing
-    if not os.path.exists("similarity.pkl"):
-        sim_id = "1RmaypuYOnky6DSHP4Cr8XJ-6IAy7L3l2"
-        gdown.download(f"https://drive.google.com/uc?id={sim_id}", "similarity.pkl", quiet=False, fuzzy=True)
-
-    # Download movie dict if missing
-    if not os.path.exists("movie_dict.pkl"):
-        dict_id = "1v1bheC3lnWuuU25rdk6vX5w8Yz5hj3B-"
-        gdown.download(f"https://drive.google.com/uc?id={dict_id}", "movie_dict.pkl", quiet=False, fuzzy=True)
+    download_if_missing(
+        "similarity.pkl",
+        "https://huggingface.co/datasets/adityakalane/similarity.pkl/resolve/main/similarity.pkl"
+    )
+    download_if_missing(
+        "movie_dict.pkl",
+        "https://huggingface.co/datasets/adityakalane/similarity.pkl/resolve/main/movie_dict.pkl"
+    )
 
     with open("movie_dict.pkl", "rb") as f:
         movies_dict = pkl.load(f)
